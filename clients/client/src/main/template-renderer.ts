@@ -1,5 +1,5 @@
 // 视觉回读 bridge（TemplateRenderBridge 实现端）：模板 → core 完整管线（测量/分页/条码 SVG 回填）
-// → 隐藏窗口载入最终 HTML → 滚动到目标页 → capturePage 截图。
+// → 隐藏窗口载入最终 HTML → 删除非目标页使目标页成为首屏唯一页 → capturePage 截图。
 // 渲染规格与静默打印同源（prepareDocument），窗口每请求一个、用完销毁（对齐 html-printer 模式）；
 // 预览互不并发（SerialGate），避免隐藏窗口堆积。
 import { BrowserWindow } from 'electron'
@@ -9,7 +9,7 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { prepareDocument } from '@worm-print-platform/core'
 import { loadExecutorBundle } from '@worm-print-platform/core/node'
-import type { PrintRuntime, PrintTemplateData } from '@worm-print-platform/core'
+import type { PaperMm, PrintRuntime, PrintTemplateData } from '@worm-print-platform/core'
 import type { TemplateRenderBridge } from '@worm-print-platform/mcp'
 import type { Logger } from './logger.js'
 import { SerialGate } from './serial-gate.js'
@@ -82,9 +82,12 @@ export function createTemplateRenderer(deps: TemplateRendererDeps): TemplateRend
         throw bridgeError('PAGE_OUT_OF_RANGE', `模板共 ${pageCount} 页，没有第 ${page} 页`)
       }
 
-      // 2. 隐藏窗口载入完整 HTML，窗口内容尺寸 = 纸张 × scale（DIP 口径）
-      const widthPx = mmToPx(prepared.paperMm.width) * scale
-      const heightPx = mmToPx(prepared.paperMm.height) * scale
+      // 2. 隐藏窗口载入完整 HTML，窗口内容尺寸 = 目标页纸张 × scale（DIP 口径）
+      // 多页横纵混排（rotatedSize 放行）时各页纸张不同，视口必须与目标页一致；
+      // 单页/批量/拼版路径无 pagePaperMm，回退首页纸（原行为）
+      const pagePaperMm = prepared.pagePaperMm?.[page - 1] ?? prepared.paperMm
+      const widthPx = mmToPx(pagePaperMm.width) * scale
+      const heightPx = mmToPx(pagePaperMm.height) * scale
       let file: string | undefined
       let win: BrowserWindow | undefined
       try {
@@ -100,10 +103,11 @@ export function createTemplateRenderer(deps: TemplateRendererDeps): TemplateRend
           webPreferences: { nodeIntegration: false, contextIsolation: true, sandbox: true },
         })
         win = created
-        return await withTimeout(() => captureIntoWindow(created, html, prepared, {
+        return await withTimeout(() => captureIntoWindow(created, html, {
           page,
           scale,
           pageCount,
+          pagePaperMm,
           startedAt,
         }), {
           // 剩余预算：prepare 已耗时接近 20s 时，截图段立即超时
@@ -124,12 +128,11 @@ export function createTemplateRenderer(deps: TemplateRendererDeps): TemplateRend
     }),
   }
 
-  /** 载入 → 等资源 → 注入执行器 → 滚动翻页 → 测量 → 截图；在 withTimeout 的预算内跑完整段链路 */
+  /** 载入 → 等资源 → 注入执行器 → 删除非目标页 → 测量 → 截图；在 withTimeout 的预算内跑完整段链路 */
   async function captureIntoWindow(
     win: BrowserWindow,
     file: string,
-    prepared: Awaited<ReturnType<typeof prepareDocument>>,
-    ctx: { page: number; scale: number; pageCount: number; startedAt: number },
+    ctx: { page: number; scale: number; pageCount: number; pagePaperMm: PaperMm; startedAt: number },
   ): Promise<Awaited<ReturnType<TemplateRenderBridge['renderTemplatePage']>>> {
     const { page, scale } = ctx
     await win.loadFile(file)
@@ -139,21 +142,25 @@ export function createTemplateRenderer(deps: TemplateRendererDeps): TemplateRend
     await waitResourcesReady(win.webContents)
     // 注入 core 的 DOM 执行器：元素几何测量只能走它，客户端不自行写测量逻辑
     await win.webContents.executeJavaScript(loadExecutorBundle().source, true)
-    // 滚动到目标页（.print-page 纵向堆叠）；双 rAF 确保滚动后的合成帧落盘再截
+    // 只保留目标页（.print-page 纵向堆叠）：混合方向下各页 DOM 尺寸互不相同，
+    // 滚动 + 截视口依赖「各页纸张一致」假设，且隐藏窗口截图可能拿到滚动前的帧，
+    // 导致 page=N 截到第 1 页内容。删除其他页后目标页成为首屏唯一页，与单页路径一致；
+    // 双 rAF 确保删除重排后的合成帧落盘再截
     const pageCountInDoc = await win.webContents.executeJavaScript(
       `(async () => {
         const pages = document.querySelectorAll('.print-page')
+        const total = pages.length
         const target = pages[${page - 1}]
         if (!target) throw new Error('页面元素缺失：.print-page 第 ${page - 1} 项')
-        window.scrollTo(0, target.offsetTop)
+        pages.forEach(p => { if (p !== target) p.remove() })
         await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
-        return pages.length
+        return total
       })()`,
       true,
     ) as number
-    // 执行器签名带 pageIndex：多页时逐页取元素矩形会串页，这里只取当前页
+    // 执行器签名带 pageIndex：文档只剩目标页，恒取第 0 页
     const measured = await win.webContents.executeJavaScript(
-      `globalThis.__wormDom.readElementRects(document, ${page - 1})`,
+      `globalThis.__wormDom.readElementRects(document, 0)`,
       true,
     ) as Array<{
       id: string
@@ -180,11 +187,11 @@ export function createTemplateRenderer(deps: TemplateRendererDeps): TemplateRend
     const png = image.toPNG()
     const size = image.getSize()
     // mmPerPx 按实际截图像素反推：zoom/deviceScaleFactor 会让它偏离 96dpi 换算值
-    const mmPerPx = computeMmPerPx(prepared.paperMm.width, size.width)
+    const mmPerPx = computeMmPerPx(ctx.pagePaperMm.width, size.width)
     deps.logger?.info('模板预览渲染完成', {
       page,
       pageCount: ctx.pageCount,
-      paperMm: prepared.paperMm,
+      paperMm: ctx.pagePaperMm,
       widthPx: size.width,
       heightPx: size.height,
       mmPerPx,
@@ -193,7 +200,7 @@ export function createTemplateRenderer(deps: TemplateRendererDeps): TemplateRend
     })
     return {
       pageCount: ctx.pageCount,
-      pageSizeMm: prepared.paperMm,
+      pageSizeMm: ctx.pagePaperMm,
       pngBase64: Buffer.from(png).toString('base64'),
       widthPx: size.width,
       heightPx: size.height,

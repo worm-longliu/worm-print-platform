@@ -8,7 +8,19 @@ const env = vi.hoisted(() => ({
   failLoad: false,
   prepareError: undefined as unknown,
   prepareElapsedMs: 0,
-  windows: [] as Array<{ destroyed: boolean; destroy: () => void }>,
+  /** 覆盖 prepareDocument 替身的返回值；缺省单页 A4 portrait */
+  prepared: undefined as
+    | { pageCount: number; paperMm: { width: number; height: number }; pagePaperMm?: Array<{ width: number; height: number }>; html: string }
+    | undefined,
+  /** 文档里的 .print-page 总数（删除非目标页脚本返回该值） */
+  pagesInDoc: 1,
+  windows: [] as Array<{
+    destroyed: boolean
+    destroy: () => void
+    /** 记录构造入参尺寸与 webContents 调用历史，供窗口/截图链路断言 */
+    size: { width: number; height: number }
+    webContents: { executeJavaScript: { mock: { calls: Array<[unknown]> } } }
+  }>,
 }))
 
 const fsEnv = vi.hoisted(() => ({ written: [] as string[] }))
@@ -32,7 +44,7 @@ vi.mock('electron', () => {
     executeJavaScript = vi.fn(async (code: unknown) => {
       const src = String(code)
       if (src.includes('readElementRects')) return [{ id: 'e1', left: 0, top: 0, width: 10, height: 5 }]
-      if (src.includes('.print-page')) return 1
+      if (src.includes('.print-page')) return env.pagesInDoc
       return undefined
     })
     capturePage = vi.fn(async () => ({
@@ -42,13 +54,16 @@ vi.mock('electron', () => {
   }
   class FakeBrowserWindow {
     webContents = new FakeWebContents()
+    /** 记录构造入参（useContentSize 下的内容尺寸），供窗口尺寸断言 */
+    size = { width: 0, height: 0 }
     destroyed = false
     isDestroyed = (): boolean => this.destroyed
     destroy = (): void => { this.destroyed = true }
     loadFile = vi.fn(async () => {
       if (env.failLoad) throw new Error('加载失败')
     })
-    constructor() {
+    constructor(options?: { width?: number; height?: number }) {
+      this.size = { width: options?.width ?? 0, height: options?.height ?? 0 }
       if (env.failConstruct) throw new Error('窗口创建失败')
       env.windows.push(this)
     }
@@ -60,7 +75,7 @@ vi.mock('@worm-print-platform/core', () => ({
   prepareDocument: vi.fn(async () => {
     if (env.prepareElapsedMs > 0) vi.advanceTimersByTime(env.prepareElapsedMs)
     if (env.prepareError !== undefined) throw env.prepareError
-    return {
+    return env.prepared ?? {
       pageCount: 1,
       paperMm: { width: 210, height: 297 },
       html: '<html></html>',
@@ -97,12 +112,21 @@ async function render(): Promise<unknown> {
   return renderer.renderTemplatePage({ templateJson: { paperSize: 'A4' }, page: 1, scale: 1 })
 }
 
+/** 指定页码渲染：混合方向多页用例需要 page=2 命中 rotatedSize 组合 */
+async function renderAt(page: number): Promise<unknown> {
+  const { createTemplateRenderer } = await import('./template-renderer.js')
+  const renderer = createTemplateRenderer({ runtime: {} as never })
+  return renderer.renderTemplatePage({ templateJson: { paperSize: 'A5' }, page, scale: 1 })
+}
+
 beforeEach(() => {
   vi.useFakeTimers()
   env.failConstruct = false
   env.failLoad = false
   env.prepareError = undefined
   env.prepareElapsedMs = 0
+  env.prepared = undefined
+  env.pagesInDoc = 1
   env.windows.length = 0
   fsEnv.written.length = 0
   budget.timeoutMs.length = 0
@@ -178,5 +202,54 @@ describe('窗口环节失败也要清理临时 HTML', () => {
   it('成功路径同样删除临时 HTML', async () => {
     await expect(render()).resolves.toBeDefined()
     expect(existsSync(fsEnv.written[0]!)).toBe(false)
+  })
+})
+
+describe('混合方向多页预览按目标页出图（rotatedSize 放行后的回归）', () => {
+  /** A5 旋转对：page1 横 210×148 + page2 纵 148×210（mm） */
+  function prepareMixedOrientation(): void {
+    env.prepared = {
+      pageCount: 2,
+      paperMm: { width: 210, height: 148 },
+      pagePaperMm: [{ width: 210, height: 148 }, { width: 148, height: 210 }],
+      html: '<html></html>',
+    }
+    env.pagesInDoc = 2
+  }
+
+  it('page=2（纵向页）：窗口尺寸按该页 148×210 设置，pageSizeMm 返回该页纸张', async () => {
+    prepareMixedOrientation()
+    const result = await renderAt(2) as { pageSizeMm: { width: number; height: number }; mmPerPx: number }
+    // mmToPx(148)=559、mmToPx(210)=794（scale=1）
+    expect(env.windows[0]!.size).toEqual({ width: 559, height: 794 })
+    expect(result.pageSizeMm).toEqual({ width: 148, height: 210 })
+    // mmPerPx 按目标页纸宽 148 反推，而非首页 210（否则偏大 42%）
+    expect(result.mmPerPx).toBe(0.1864)
+  })
+
+  it('page=1（横向页）：窗口与 pageSizeMm 仍取首页纸张', async () => {
+    prepareMixedOrientation()
+    const result = await renderAt(1) as { pageSizeMm: { width: number; height: number } }
+    expect(env.windows[0]!.size).toEqual({ width: 794, height: 559 })
+    expect(result.pageSizeMm).toEqual({ width: 210, height: 148 })
+  })
+
+  it('删除非目标页使目标页成为首屏唯一页：测量恒取第 0 页', async () => {
+    prepareMixedOrientation()
+    await renderAt(2)
+    const calls = env.windows[0]!.webContents.executeJavaScript.mock.calls as Array<[string]>
+    // 删除脚本：只保留 pages[1]，其余 remove
+    const removeCall = calls.find(([src]) => src.includes('.print-page') && src.includes('remove()'))
+    expect(removeCall?.[0]).toContain('pages[1]')
+    // 测量不再用原始页码索引（文档只剩一页），恒为 0
+    const measureCall = calls.find(([src]) => src.includes('readElementRects'))
+    expect(measureCall?.[0]).toBe('globalThis.__wormDom.readElementRects(document, 0)')
+  })
+
+  it('单页模板无 pagePaperMm 时回退 paperMm（原行为不变）', async () => {
+    env.prepared = { pageCount: 1, paperMm: { width: 210, height: 297 }, html: '<html></html>' }
+    const result = await renderAt(1) as { pageSizeMm: { width: number; height: number } }
+    expect(env.windows[0]!.size).toEqual({ width: 794, height: 1123 })
+    expect(result.pageSizeMm).toEqual({ width: 210, height: 297 })
   })
 })
