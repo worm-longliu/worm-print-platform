@@ -1127,11 +1127,29 @@ export class PrintDesignerElement extends HTMLElement {
     return { left, top }
   }
 
+  /** 鼠标是否落在 .canvas-area 的滚动条上。滚动条点击的 target 即容器本身。 */
+  private isOnScrollbar(ev: MouseEvent, area: HTMLElement): boolean {
+    const rect = area.getBoundingClientRect()
+    const dx = ev.clientX - rect.left
+    const dy = ev.clientY - rect.top
+    // 经典滚动条占布局空间，命中区在 client box 之外；覆盖式滚动条（macOS）不占空间，
+    // 贴近右/下边缘的窄带兜底（两者都可与 clientWidth/clientHeight 比较）。
+    const hbar = area.offsetHeight - area.clientHeight
+    const vbar = area.offsetWidth - area.clientWidth
+    const bottom = area.clientTop + area.clientHeight
+    const right = area.clientLeft + area.clientWidth
+    return (hbar > 0 ? dy >= bottom : dy >= bottom - 12)
+      || (vbar > 0 ? dx >= right : dx >= right - 12)
+  }
+
   private onCanvasMouseDown(ev: MouseEvent) {
     const target = ev.target as HTMLElement
+    const area = this.root.querySelector<HTMLElement>('.canvas-area')
+    // 拖动滚动条走原生会话：此处若清空选中触发重绘、或启动框选，都会换掉滚动容器打断拖动。
+    if (area && target === area && this.isOnScrollbar(ev, area)) return
     // 与 Vue 3 轨的 isCanvasBackground 同口径的**白名单**（早期用「不在元素/下拉/菜单上」的黑名单，
     // 于是点标尺、参考线、设计背景也会清空选中并起框选，Vue 3 轨不会）
-    const isBg = target === this.root.querySelector<HTMLElement>('.canvas-area')
+    const isBg = target === area
       || ['canvas-scroll', 'hiprint-printPaper', 'hiprint-printPaper-content', 'zone-layer', 'grid-bg', 'watermark-layer']
         .some(c => target.classList.contains(c))
     if (!isBg) return
@@ -1198,7 +1216,21 @@ export class PrintDesignerElement extends HTMLElement {
         w: Math.abs(m.clientX - start.x),
         h: Math.abs(m.clientY - start.y),
       }
-      this.paint()
+      // 拖动滚动条时 mousedown 也会命中 .canvas-area 走到这里。此处若 paint() 整树重建，
+      // 滚动容器会在拖动途中被换掉，原生滚动条拖动会话立刻中断（表现为「有滚动条但拖不动」）。
+      // 框选浮层只需定点更新，抬起时再统一重绘。
+      const area = this.root.querySelector<HTMLElement>('.canvas-area')
+      if (!area) return
+      let node = area.querySelector<HTMLElement>('.marquee-selection')
+      if (!node) {
+        node = document.createElement('div')
+        node.className = 'marquee-selection'
+        area.appendChild(node)
+      }
+      node.style.left = `${this.marquee.x}px`
+      node.style.top = `${this.marquee.y}px`
+      node.style.width = `${this.marquee.w}px`
+      node.style.height = `${this.marquee.h}px`
     }
     const onUp = () => {
       window.removeEventListener('mousemove', onMove)

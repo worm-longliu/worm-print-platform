@@ -1,7 +1,7 @@
 {
   "id": "echarts",
   "uniqueId": "worm-echarts",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "name": "百度图表元素",
   "npmName": "@worm-print-platform/plugin-echarts",
   "entry": "dist/marketplace.js",
@@ -19,8 +19,8 @@
   ],
   "exportFormats": [],
   "peerDeps": {
-    "@worm-print-platform/core": "^1.6.4",
-    "@worm-print-platform/plugin-kit": "^1.6.4"
+    "@worm-print-platform/core": "^1.6.5",
+    "@worm-print-platform/plugin-kit": "^1.6.5"
   },
   "files": ["dist/marketplace.js", "plugin.json", "README.md", "LICENSE"]
 }
