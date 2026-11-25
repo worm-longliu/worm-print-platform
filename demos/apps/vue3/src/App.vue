@@ -672,6 +672,7 @@ const autoShow = useAutoShow({
   closePreview: () => { previewVisible.value = false },
   currentTemplateJson,
   batchEnabled,
+  getPreviewFrame: () => previewFrameRef.value,
   syncDesigner,
   snapshot: () => ({ templateData, fields, activeData, currentSample, batchEnabled, customDataActive }),
 })

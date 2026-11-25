@@ -40,6 +40,12 @@ defineProps({
       </div>
     </div>
 
+    <div
+      v-if="autoShow.currentStep && autoShow.currentStep.kind !== 'intro'"
+      class="auto-show-stage"
+      data-test="auto-show-stage"
+    >{{ ['preview', 'tiling'].includes(autoShow.currentStep.kind) ? '出纸预览' : '设计稿' }}</div>
+
     <div class="auto-show-subtitle" data-test="auto-show-subtitle" aria-live="polite">
       {{ autoShow.currentText }}
     </div>

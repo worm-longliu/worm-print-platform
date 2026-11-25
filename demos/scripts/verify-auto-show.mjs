@@ -73,6 +73,14 @@ async function waitPreview(page, timeout = 20000) {
   })
 }
 
+const readScrollY = page => page.evaluate(() => {
+  const win = document.querySelector('.print-html-preview-iframe')?.contentWindow
+  return {
+    y: win?.scrollY ?? 0,
+    max: Math.max(0, (win?.document?.documentElement?.scrollHeight ?? 0) - (win?.innerHeight ?? 0)),
+  }
+})
+
 async function readHostState(page) {
   return page.evaluate(() => ({
     badges: [...document.querySelectorAll('.demo-badge')].map(el => el.textContent.trim()).join(' '),
@@ -149,10 +157,12 @@ try {
   await waitStep(page, 'express-waybill')
   const express = await readHostState(page)
   check('自动加载快递电子面单', express.badges.includes('快递电子面单'), express.badges)
+  check('设计稿阶段显示阶段标识', (await page.locator('[data-test="auto-show-stage"]').textContent())?.trim() === '设计稿')
 
   await waitStep(page, 'express-preview')
   const expressPreview = await waitPreview(page)
   check('面单真实出纸预览已渲染', expressPreview.pages > 0, `${expressPreview.pages} 页`)
+  check('预览阶段显示阶段标识', (await page.locator('[data-test="auto-show-stage"]').textContent())?.trim() === '出纸预览')
 
   await page.locator('[data-action="sound"]').click()
   await page.waitForFunction(() => window.__autoShowAudioEvents.some(event => event.method === 'play'))
@@ -172,6 +182,10 @@ try {
   check('开启声音后配音实际播放', true)
   await page.locator('[data-action="sound"]').click()
 
+  await waitStep(page, 'price-label')
+  const price = await readHostState(page)
+  check('价签先展示设计稿且关闭批量', price.badges.includes(PRICE_SAMPLE.name) && !price.batch, price.badges)
+
   await waitStep(page, 'price-tiling')
   const tilingPreview = await waitPreview(page)
   const tiling = await readHostState(page)
@@ -190,34 +204,67 @@ try {
   const weight = await readHostState(page)
   check('特色模版：称签打印已加载', weight.badges.includes(WEIGHT_SAMPLE.name), weight.badges)
 
+  await waitStep(page, 'weight-preview')
+  const weightPreview = await waitPreview(page)
+  check('称签打印有出纸预览', weightPreview.pages > 0, `${weightPreview.pages} 页`)
+
   await waitStep(page, 'battery-module-label-no-sn')
   const battery = await readHostState(page)
   const batteryText = (await page.locator('[data-test="auto-show-subtitle"]').textContent())?.trim() ?? ''
   check('特色模版：电池无 SN 标签已加载且讲清条码属性', battery.badges.includes(BATTERY_SAMPLE.name) && ['barWidth', 'barHeight', 'printerDpi', '清晰'].every(key => batteryText.includes(key)), battery.badges)
 
+  await waitStep(page, 'battery-preview')
+  const batteryPreview = await waitPreview(page)
+  check('电池标签有出纸预览', batteryPreview.pages > 0, `${batteryPreview.pages} 页`)
+
   await waitStep(page, 'payment-request')
   const payment = await readHostState(page)
   check('特色模版：付款申请单已加载', payment.badges.includes(PAYMENT_SAMPLE.name), payment.badges)
+
+  await waitStep(page, 'payment-preview')
+  const paymentPreview = await waitPreview(page)
+  check('付款申请单有出纸预览', paymentPreview.pages > 0, `${paymentPreview.pages} 页`)
 
   await waitStep(page, 'tcm-prescription')
   const tcm = await readHostState(page)
   check('特色模版：中药处方笺已加载', tcm.badges.includes(TCM_SAMPLE.name), tcm.badges)
 
+  await waitStep(page, 'tcm-preview')
+  const tcmPreview = await waitPreview(page)
+  check('中药处方笺有出纸预览', tcmPreview.pages > 0, `${tcmPreview.pages} 页`)
+
   await waitStep(page, 'comprehensive-showcase')
   const comprehensive = await readHostState(page)
   check('特色模版：综合示例已加载', comprehensive.badges.includes(COMPREHENSIVE_SAMPLE.name), comprehensive.badges)
 
+  await waitStep(page, 'comprehensive-preview')
+  const comprehensivePreview = await waitPreview(page)
+  check('综合示例有出纸预览', comprehensivePreview.pages > 0, `${comprehensivePreview.pages} 页`)
+
   await waitStep(page, 'health-report')
   const health = await readHostState(page)
   check('特色模版：体检报告已加载', health.badges.includes(HEALTH_SAMPLE.name), health.badges)
+  await page.waitForFunction(() => document.querySelector('[data-test="auto-show-subtitle"]')?.textContent.includes('第 1 / 5 页'), undefined, { timeout: 10000 })
+  check('多页模版逐页展示设计稿并显示页码', true)
+  await page.waitForFunction(() => document.querySelector('[data-test="auto-show-subtitle"]')?.textContent.includes('第 5 / 5 页'), undefined, { timeout: 20000 })
+  const healthPageIndex = await page.evaluate(() => document.querySelector('print-designer')?.store?.activePageIndex)
+  check('逐页展示后停在最后一页设计稿', healthPageIndex === 4, String(healthPageIndex))
 
   await waitStep(page, 'health-preview')
   const healthPreview = await waitPreview(page)
   check('体检报告多页与图表出纸预览已渲染', healthPreview.pages > 0, `${healthPreview.pages} 页`)
+  const scrollStart = await readScrollY(page)
+  await page.waitForTimeout(1500)
+  const scrollMid = await readScrollY(page)
+  check('预览随时间缓慢滚动', scrollStart.max > 0 && scrollMid.y > scrollStart.y, JSON.stringify({ scrollStart, scrollMid }))
 
   await waitStep(page, 'multipage-mixed-orientation')
   const multipage = await readHostState(page)
   check('特色模版：多页横纵混排已加载', multipage.badges.includes(MULTIPAGE_SAMPLE.name), multipage.badges)
+
+  await waitStep(page, 'multipage-preview')
+  const multipagePreview = await waitPreview(page)
+  check('多页横纵混排有统一出纸预览', multipagePreview.pages > 0, `${multipagePreview.pages} 页`)
 
   await page.locator('[data-action="stop"]').click()
   await page.waitForFunction(() => !document.querySelector('.auto-show-layer'))
@@ -247,7 +294,7 @@ try {
   }))
   check('auto 参数自动启动且保持静音循环', autoState.status === 'running' && autoState.sound === 'false' && autoState.loop === 'true', JSON.stringify(autoState))
   await waitStep(page, 'asset-preview', 35000)
-  await waitStep(page, 'express-waybill', 30000)
+  await waitStep(page, 'express-waybill', 120000)
   check('循环模式从第二步继续且不重复开场', true)
   await page.locator('[data-action="stop"]').click()
   await page.waitForFunction(() => !document.querySelector('.auto-show-layer'))
@@ -255,7 +302,7 @@ try {
   await page.goto(new URL('?auto=1', URL_).href, { waitUntil: 'networkidle' })
   await waitDesigner(page)
   await waitStep(page, 'asset-preview', 35000)
-  await waitVisible(page, '[data-test="auto-show-fab"]', 30000)
+  await waitVisible(page, '[data-test="auto-show-fab"]', 120000)
   check('非循环模式一轮结束后自动回到 idle', !(await page.locator('.auto-show-layer').count()) && !(await page.locator('.preview-mask').count()))
 
   await page.locator('[data-test="auto-show-fab"]').click()

@@ -1,6 +1,7 @@
 import { computed, isRef, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { AUTO_SHOW_STEPS, INTRO_SLIDE_MS } from './steps'
 import { waitForVoiceEnd } from './voice-wait'
+import { scrollPreviewOver } from './preview-scroll'
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 const cloneValue = value => value == null ? value : JSON.parse(JSON.stringify(value))
@@ -13,6 +14,7 @@ export function useAutoShow({
   closePreview,
   currentTemplateJson,
   batchEnabled,
+  getPreviewFrame,
   snapshot,
   syncDesigner,
 }) {
@@ -20,10 +22,18 @@ export function useAutoShow({
   const status = ref('idle')
   const stepIndex = ref(-1)
   const introSlideIndex = ref(0)
+  const designPageIndex = ref(0)
+  const designPageCount = ref(0)
   const soundEnabled = ref(false)
   const loopEnabled = ref(params.get('loop') === '1')
   const currentStep = computed(() => AUTO_SHOW_STEPS[stepIndex.value] ?? null)
-  const currentText = computed(() => currentStep.value?.text ?? '')
+  const currentText = computed(() => {
+    const base = currentStep.value?.text ?? ''
+    if (currentStep.value?.kind === 'design-pages' && designPageCount.value > 1) {
+      return `${base}\n第 ${designPageIndex.value + 1} / ${designPageCount.value} 页`
+    }
+    return base
+  })
   const introSamples = computed(() => {
     const ids = AUTO_SHOW_STEPS[0].sampleIds
     return ids.map(id => samples.find(sample => sample.id === id)).filter(Boolean)
@@ -91,11 +101,33 @@ export function useAutoShow({
     playAudio(audio, token)
   }
 
+  /** 预览滚动时长与配音时长同步；音频元数据未到时短暂等待，最多 600ms */
+  async function previewScrollMs(step, token) {
+    if (soundEnabled.value && currentAudio && !Number.isFinite(currentAudio.duration)) {
+      const started = performance.now()
+      while (token === runToken && performance.now() - started < 600) {
+        if (Number.isFinite(currentAudio.duration)) break
+        await delay(50)
+      }
+    }
+    const voiceMs = soundEnabled.value && Number.isFinite(currentAudio?.duration)
+      ? currentAudio.duration * 1000
+      : 0
+    return Math.max(step.hold, voiceMs)
+  }
+
   async function performStep(step) {
     if (step.kind === 'intro') return
     closePreview()
-    if (step.kind === 'load-sample' || step.kind === 'tiling') {
+    if (step.kind === 'load-sample' || step.kind === 'design-pages' || step.kind === 'tiling') {
       applySample(samples.find(sample => sample.id === step.sampleId))
+    }
+    // 设计稿阶段按单枚出纸展示；只有拼版预览打开批量
+    if (step.kind === 'load-sample' || step.kind === 'design-pages') batchEnabled.value = false
+    if (step.kind === 'design-pages') {
+      designPageCount.value = currentTemplateJson().pages?.length ?? 1
+      designer.value.store.switchPage(0)
+      designPageIndex.value = 0
     }
     if (step.kind === 'tiling') batchEnabled.value = true
     if (step.kind === 'preview' || step.kind === 'tiling') {
@@ -122,10 +154,25 @@ export function useAutoShow({
       }
       if (token !== runToken) return
 
+      const scrolling = step.kind === 'preview' || step.kind === 'tiling'
+        ? scrollPreviewOver({
+          getFrame: getPreviewFrame,
+          durationMs: await previewScrollMs(step, token),
+          isCancelled: () => token !== runToken,
+        })
+        : null
+
       if (step.kind === 'intro') {
         for (let slide = 0; slide < introSamples.value.length; slide += 1) {
           introSlideIndex.value = slide
           if (!await wait(INTRO_SLIDE_MS, token)) return
+        }
+      } else if (step.kind === 'design-pages') {
+        // 多页模版先逐页展示设计稿，再进入统一预览步骤
+        for (let page = 0; page < designPageCount.value; page += 1) {
+          designPageIndex.value = page
+          designer.value.store.switchPage(page)
+          if (!await wait(step.hold, token)) return
         }
       } else if (!await wait(step.hold, token)) {
         return
@@ -138,6 +185,7 @@ export function useAutoShow({
         isSoundEnabled: () => soundEnabled.value,
         isCancelled: () => token !== runToken,
       })) return
+      if (scrolling && !await scrolling) return
       if (token !== runToken) return
 
       index += 1
@@ -160,6 +208,8 @@ export function useAutoShow({
     status.value = 'running'
     stepIndex.value = 0
     introSlideIndex.value = 0
+    designPageIndex.value = 0
+    designPageCount.value = 0
     soundEnabled.value = false
     stopAudio()
     await run(token)
@@ -192,6 +242,8 @@ export function useAutoShow({
     status.value = 'idle'
     stepIndex.value = -1
     introSlideIndex.value = 0
+    designPageIndex.value = 0
+    designPageCount.value = 0
   }
 
   function toggleSound() {
@@ -216,6 +268,8 @@ export function useAutoShow({
     status,
     stepIndex,
     introSlideIndex,
+    designPageIndex,
+    designPageCount,
     soundEnabled,
     loopEnabled,
     currentStep,

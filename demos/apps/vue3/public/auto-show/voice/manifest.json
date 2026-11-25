@@ -1,7 +1,7 @@
 {
   "provider": "edge-tts",
   "voice": "zh-CN-YunxiNeural",
-  "generatedAt": "2026-11-25T05:49:09.589Z",
+  "generatedAt": "2026-11-25T06:19:15.669Z",
   "lines": [
     {
       "key": "intro",
@@ -25,11 +25,18 @@
       "bytes": 48384
     },
     {
+      "key": "price",
+      "text": "价签设计稿：品名、规格、促销价与划线原价，再加商品条码。",
+      "file": "price.mp3",
+      "sha256": "0c02b16159df6624947a6751de9c51432ede89f43a5627cec876a5274ad96403",
+      "bytes": 42048
+    },
+    {
       "key": "tiling",
-      "text": "价签拼版：32 枚货架价签铺满一张 A4，规格、促销价和条码都在。",
+      "text": "价签拼版：32 枚标签铺满一张 A4，滚动预览逐枚看清条码。",
       "file": "tiling.mp3",
-      "sha256": "457d4bc730aa093e6abb8654d1f2ea40725974de7f099facbae2fd9e1c99f0a7",
-      "bytes": 43488
+      "sha256": "b01e5997fff9f3b4c568ffee06ffa1bf9327fab62cf50c8bf7ed656e2a02c442",
+      "bytes": 37872
     },
     {
       "key": "asset",
@@ -40,10 +47,10 @@
     },
     {
       "key": "asset-preview",
-      "text": "资产标签预览：二维码和资产字段按单枚纸面出纸。",
+      "text": "资产标签预览：二维码和资产字段按单枚纸面出纸，缓慢滚动看清细节。",
       "file": "asset-preview.mp3",
-      "sha256": "afcbfa3022a63c5758e16b535cd86e55a44a5179491e36eb03e9c1c949221c57",
-      "bytes": 33264
+      "sha256": "8105668881bd1fe87108a4774263cf726db34b3a359f4fa6702f62172ff844f7",
+      "bytes": 45936
     },
     {
       "key": "weight",
@@ -53,6 +60,13 @@
       "bytes": 46656
     },
     {
+      "key": "weight-preview",
+      "text": "称签预览：60×40 毫米标签上的净重、金额与条码清晰出纸。",
+      "file": "weight-preview.mp3",
+      "sha256": "a7c24ddc00214ce19296cdd9e932fe29c7d491b80c7549076b9eb41137296dde",
+      "bytes": 41328
+    },
+    {
       "key": "battery-no-sn",
       "text": "电池模块标签（无 SN）：CODE128 条码横跨四列；barWidth 3、barHeight 7 毫米、printerDpi 203，让热敏出纸更清晰。",
       "file": "battery-no-sn.mp3",
@@ -60,11 +74,25 @@
       "bytes": 69408
     },
     {
+      "key": "battery-preview",
+      "text": "电池标签预览：横跨四列的条码按 203dpi 出纸，边缘更清晰。",
+      "file": "battery-preview.mp3",
+      "sha256": "96234824230c54625aa9ab58941463d318dde339f6027bc737979c7b1ba2e8e5",
+      "bytes": 39888
+    },
+    {
       "key": "payment",
-      "text": "付款申请单：付款方式按同值纵向合并，跨页重新显示，审批栏重复。",
+      "text": "付款申请单：逐页看设计稿——付款方式同值纵向合并、跨页重显，审批栏重复。",
       "file": "payment.mp3",
-      "sha256": "03ff9b5f17b2cb6ed40376417ec8b6d1ca5862500e9549a13df0513619b45d6e",
-      "bytes": 46080
+      "sha256": "c713abdbf587059874188e0de2022c4da267bc836117aa89e1de4aa943f241e6",
+      "bytes": 50832
+    },
+    {
+      "key": "payment-preview",
+      "text": "付款申请预览：合并单元格与审批栏按真实纸张连续出纸。",
+      "file": "payment-preview.mp3",
+      "sha256": "fb25a2f02f66e88755cf9af9ec2a642a7135a33bb356da1b7746ac55221e84cb",
+      "bytes": 34992
     },
     {
       "key": "tcm",
@@ -74,6 +102,13 @@
       "bytes": 44640
     },
     {
+      "key": "tcm-preview",
+      "text": "处方笺预览：11 味药按流式四列出纸，长药名跨列不断词。",
+      "file": "tcm-preview.mp3",
+      "sha256": "5d048284e3a2b1af919011c1f1c1a21ca94711d5d9b4eab39bcd7a0f6062cbdc",
+      "bytes": 35136
+    },
+    {
       "key": "comprehensive",
       "text": "综合示例：同一张明细表里，商品图片、条形码、二维码与金额图文混排。",
       "file": "comprehensive.mp3",
@@ -81,18 +116,25 @@
       "bytes": 46944
     },
     {
+      "key": "comprehensive-preview",
+      "text": "综合示例预览：图片、条码与二维码在同一张明细表里出纸。",
+      "file": "comprehensive-preview.mp3",
+      "sha256": "8d2cdb1aab7c2fc2cc75dca9ad110176c5dfc03aa2bc344b36990d77e5daa794",
+      "bytes": 36144
+    },
+    {
       "key": "health",
       "text": "体检报告：5 页 A4，多级表头与异常高亮，白细胞分类和生化趋势图混排。",
       "file": "health.mp3",
-      "sha256": "f57923849e3cb7b50016a90b3bad3e56bbdf6cad5457d1d444f2068325a3a61d",
+      "sha256": "05647e3fae17b8475081d5d3c6d10f50fb47311f584bc871aeb0abebc7419f8a",
       "bytes": 48528
     },
     {
       "key": "health-preview",
-      "text": "体检报告预览：表格与图表在同一份文档里连续出纸，页码自动续接。",
+      "text": "体检报告预览：表格与图表在 5 页里连续出纸，页码自动续接。",
       "file": "health-preview.mp3",
-      "sha256": "a2952b11ba38886988e9a1cda7e7a6e56fa552aa26573405b9e0430dc75b6361",
-      "bytes": 41472
+      "sha256": "48b448d40fef467955eb0f04e792c738dbacdabc9126af19186fb6a15a1ab190",
+      "bytes": 38592
     },
     {
       "key": "multipage",
@@ -100,6 +142,13 @@
       "file": "multipage.mp3",
       "sha256": "f1a0aa6a691f112d47810682582f53f6c0c8b77d0a8995717505dbc0be9d5171",
       "bytes": 45648
+    },
+    {
+      "key": "multipage-preview",
+      "text": "混排预览：三页按各自方向连续出纸，页码接续，滚动看清每张纸面。",
+      "file": "multipage-preview.mp3",
+      "sha256": "3ec371daac71b37c173f7b84d357fcdd9183b0bc708e1fdb113fb1383413914a",
+      "bytes": 44064
     }
   ]
 }
