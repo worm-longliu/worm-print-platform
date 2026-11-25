@@ -10,7 +10,11 @@ const URL_ = process.argv[2] || 'http://localhost:9331/'
 const ASSET_SAMPLE = SAMPLES.find(sample => sample.id === 'asset-tag')
 const PRICE_SAMPLE = SAMPLES.find(sample => sample.id === 'price-label')
 const WEIGHT_SAMPLE = SAMPLES.find(sample => sample.id === 'weight-label')
-const BATTERY_SAMPLE = SAMPLES.find(sample => sample.id === 'battery-module-label')
+const BATTERY_SAMPLE = SAMPLES.find(sample => sample.id === 'battery-module-label-no-sn')
+const PAYMENT_SAMPLE = SAMPLES.find(sample => sample.id === 'payment-request')
+const TCM_SAMPLE = SAMPLES.find(sample => sample.id === 'tcm-prescription')
+const COMPREHENSIVE_SAMPLE = SAMPLES.find(sample => sample.id === 'comprehensive-showcase')
+const HEALTH_SAMPLE = SAMPLES.find(sample => sample.id === 'health-report')
 const MULTIPAGE_SAMPLE = SAMPLES.find(sample => sample.id === 'multipage-mixed-orientation')
 const results = []
 
@@ -98,12 +102,14 @@ try {
     let nextId = 1
     window.__autoShowAudioEvents = []
     window.__autoShowAudios = []
+    window.__autoShowAudioEnded = []
     for (const method of ['play', 'pause']) {
       const original = HTMLMediaElement.prototype[method]
       HTMLMediaElement.prototype[method] = function (...args) {
         if (!ids.has(this)) {
           ids.set(this, nextId++)
           window.__autoShowAudios.push(this)
+          this.addEventListener('ended', () => window.__autoShowAudioEnded.push(ids.get(this)))
         }
         window.__autoShowAudioEvents.push({ method, id: ids.get(this), time: this.currentTime })
         return original.apply(this, args)
@@ -184,21 +190,30 @@ try {
   const weight = await readHostState(page)
   check('特色模版：称签打印已加载', weight.badges.includes(WEIGHT_SAMPLE.name), weight.badges)
 
-  await waitStep(page, 'battery-module-label')
+  await waitStep(page, 'battery-module-label-no-sn')
   const battery = await readHostState(page)
-  check('特色模版：电池 SN 条码标签已加载', battery.badges.includes(BATTERY_SAMPLE.name), battery.badges)
+  const batteryText = (await page.locator('[data-test="auto-show-subtitle"]').textContent())?.trim() ?? ''
+  check('特色模版：电池无 SN 标签已加载且讲清条码属性', battery.badges.includes(BATTERY_SAMPLE.name) && ['barWidth', 'barHeight', 'printerDpi', '清晰'].every(key => batteryText.includes(key)), battery.badges)
 
-  await waitStep(page, 'barcode-size')
-  const sizeText = (await page.locator('[data-test="auto-show-subtitle"]').textContent())?.trim() ?? ''
-  check('条码尺寸属性讲解包含 barWidth 与 barHeight', sizeText.includes('barWidth') && sizeText.includes('barHeight'), sizeText)
+  await waitStep(page, 'payment-request')
+  const payment = await readHostState(page)
+  check('特色模版：付款申请单已加载', payment.badges.includes(PAYMENT_SAMPLE.name), payment.badges)
 
-  await waitStep(page, 'barcode-dpi')
-  const dpiText = (await page.locator('[data-test="auto-show-subtitle"]').textContent())?.trim() ?? ''
-  check('条码清晰度讲解包含 printerDpi 203 与更清晰', dpiText.includes('printerDpi') && dpiText.includes('203') && dpiText.includes('清晰'), dpiText)
+  await waitStep(page, 'tcm-prescription')
+  const tcm = await readHostState(page)
+  check('特色模版：中药处方笺已加载', tcm.badges.includes(TCM_SAMPLE.name), tcm.badges)
 
-  await waitStep(page, 'battery-preview')
-  const batteryPreview = await waitPreview(page)
-  check('电池标签条码出纸预览已渲染', batteryPreview.pages > 0, `${batteryPreview.pages} 页`)
+  await waitStep(page, 'comprehensive-showcase')
+  const comprehensive = await readHostState(page)
+  check('特色模版：综合示例已加载', comprehensive.badges.includes(COMPREHENSIVE_SAMPLE.name), comprehensive.badges)
+
+  await waitStep(page, 'health-report')
+  const health = await readHostState(page)
+  check('特色模版：体检报告已加载', health.badges.includes(HEALTH_SAMPLE.name), health.badges)
+
+  await waitStep(page, 'health-preview')
+  const healthPreview = await waitPreview(page)
+  check('体检报告多页与图表出纸预览已渲染', healthPreview.pages > 0, `${healthPreview.pages} 页`)
 
   await waitStep(page, 'multipage-mixed-orientation')
   const multipage = await readHostState(page)
@@ -266,7 +281,7 @@ try {
     }
   }, audioIndex)
   check('配音播放中停留在当前步骤', voiced.step === 'express-waybill' && voiced.playing, JSON.stringify(voiced))
-  await page.waitForFunction(index => window.__autoShowAudios[index]?.ended === true, audioIndex, { timeout: 15000 })
+  await page.waitForFunction(index => window.__autoShowAudioEnded.includes(index + 1), audioIndex, { timeout: 15000 })
   await waitStep(page, 'express-preview')
   check('配音播完才切换到下一步', true)
   await page.locator('[data-action="sound"]').click()
