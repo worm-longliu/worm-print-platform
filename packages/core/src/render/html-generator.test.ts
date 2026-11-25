@@ -772,6 +772,34 @@ describe('文本元素 backgroundColor 渲染', () => {
   })
 })
 
+// ─── 文本元素 textDecoration 渲染（设计态可见，出纸必须同样可见）───
+
+describe('文本元素 textDecoration 渲染', () => {
+  it('text 元素设置 textDecoration 时输出 text-decoration（字段下划线出纸生效）', () => {
+    const t = makeAreaTemplate({
+      header: {
+        height: 15,
+        elements: [
+          makeAreaEl('text', { testData: 'X', textDecoration: 'underline' }),
+        ] as any,
+      },
+    })
+    const html = generateHtml(t, singlePage)
+    expect(html).toContain('text-decoration:underline')
+  })
+
+  it('未设置 textDecoration 时不输出 text-decoration（存量模板行为不变）', () => {
+    const t = makeAreaTemplate({
+      header: {
+        height: 15,
+        elements: [makeAreaEl('text', { testData: 'Y' })] as any,
+      },
+    })
+    const html = generateHtml(t, singlePage)
+    expect(html).not.toContain('text-decoration')
+  })
+})
+
 // ─── 页面(纸张)背景色渲染（预览与打印/PDF 一致）───
 
 describe('页面背景色渲染', () => {

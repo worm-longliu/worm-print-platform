@@ -388,6 +388,9 @@ function textStyle(opts: Record<string, any>, defaultLineHeight?: string): strin
   if (fontSize) parts.push(`font-size:${fontSize}pt`)
   if (opts.fontFamily) parts.push(`font-family:${escapeInlineStyleValue(toFontFamilyStack(opts.fontFamily))}`)
   if (opts.fontWeight) parts.push(`font-weight:${opts.fontWeight}`)
+  // 字段元素的下划线/删除线（格式工具栏写入 textDecoration）：设计态由 textLikeStyle 输出，
+  // 出纸必须同步落声明，否则预览/打印丢失装饰线。
+  if (opts.textDecoration) parts.push(`text-decoration:${escapeInlineStyleValue(opts.textDecoration)}`)
   if (opts.color) parts.push(`color:${opts.color}`)
   if (opts.backgroundColor) parts.push(`background-color:${opts.backgroundColor}`)
   if (opts.lineHeight) parts.push(`line-height:${opts.lineHeight}pt`)
