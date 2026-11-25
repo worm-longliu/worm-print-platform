@@ -77,6 +77,8 @@ npx @worm-print-platform/marketplace install data-preview --force
 - 入口放 `src/main.js/ts` 静态 import，不把本地插件路径写进 Vite `optimizeDeps.include`。
 - `--force` 暂存后原子切换，失败恢复旧插件、旧语言与旧清单；不要先 `rm -rf` 旧目录。
 
+从官方仓库链接判断是否需要更新、以及按宿主前端框架选择安装方式，见 [插件更新判断与按框架安装](plugin-update-flow.md)。
+
 ### 浏览器直挂（无打包器 / jQuery / 传统项目）
 
 从 `@worm-print-platform/canvas/browser` 对应产物把 `canvas.js` 与 `canvas.css` 拷到宿主静态目录（真实项目等价于「从制品库下载这两个文件」）。`canvas.js` 是 UMD，已内联 core 与码制库，挂出全局 `window.WormPrintCanvas`：
