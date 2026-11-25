@@ -1,14 +1,14 @@
 {
   "provider": "edge-tts",
   "voice": "zh-CN-YunxiNeural",
-  "generatedAt": "2026-11-24T12:54:38.506Z",
+  "generatedAt": "2026-11-25T03:50:18.830Z",
   "lines": [
     {
       "key": "intro",
-      "text": "欢迎来到打印模板设计器。接下来依次展示快递面单、价签拼版和资产标签。",
+      "text": "欢迎来到打印模板设计器。依次展示快递面单、价签拼版、资产标签和更多特色模版。",
       "file": "intro.mp3",
-      "sha256": "ad395dcb993b76945452c7b6057506e950463c3b4b5aee8ee5f8466821ec5d12",
-      "bytes": 47664
+      "sha256": "18db2c2eda765adb2838fc4c7819d06c6a4a380b702fb041f608b03888a55cfe",
+      "bytes": 53712
     },
     {
       "key": "express",
@@ -37,6 +37,41 @@
       "file": "asset.mp3",
       "sha256": "a5f8e252d1cf7be760388584843401e39f782398b54d4b0a57816cd54cb19547",
       "bytes": 46656
+    },
+    {
+      "key": "weight",
+      "text": "称签打印：称重标签把品名、净重、金额和商品条码打在同一张纸上。",
+      "file": "weight.mp3",
+      "sha256": "19e900c6fafa8f4ebf0539146ac474b947efe9337abb2ecf8a66faf809922ca9",
+      "bytes": 48672
+    },
+    {
+      "key": "battery",
+      "text": "已为你加载电池模块标签。SN 序列号用 CODE128 条码承载。",
+      "file": "battery.mp3",
+      "sha256": "0688552e7fb13480a5149c016c6dce227aa250400b1ff88de0e28ac154fb7edb",
+      "bytes": 40464
+    },
+    {
+      "key": "barcode",
+      "text": "barWidth 三倍模块宽、barHeight 七毫米条高，让条码更宽更高。",
+      "file": "barcode.mp3",
+      "sha256": "162ac86caaf247dbe3d8c65f5896cf0f8a2124f0a7d9efac6910fecf6e67682e",
+      "bytes": 33984
+    },
+    {
+      "key": "dpi",
+      "text": "printerDpi 203 让尺寸吸附整数打印点，热敏出纸不再条宽忽宽忽窄，条码更清晰、扫描一次通过。",
+      "file": "dpi.mp3",
+      "sha256": "3b2729a6e0fcc04b7945bbffeef40e197ea928c70c22526e7b6afe8c4ed12ba8",
+      "bytes": 57600
+    },
+    {
+      "key": "multipage",
+      "text": "多页横纵混排：封面、明细、条款自动分页，横竖版式在同一份文档里切换。",
+      "file": "multipage.mp3",
+      "sha256": "7326db5a17eed2c3342eb6546cc632729c4405f0c9d4be466158538490b1588c",
+      "bytes": 48816
     }
   ]
 }

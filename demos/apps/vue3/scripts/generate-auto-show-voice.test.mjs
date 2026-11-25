@@ -9,11 +9,11 @@ import { VOICE_LINES } from '../src/auto-show/steps.js'
 const ROOT = dirname(fileURLToPath(import.meta.url))
 const VOICE_DIR = join(ROOT, '..', 'public', 'auto-show', 'voice')
 
-test('五条公开演示配音与步骤文案一致且资产完整', async () => {
+test('公开演示配音与步骤文案一致且资产完整', async () => {
   const manifest = JSON.parse(await readFile(join(VOICE_DIR, 'manifest.json'), 'utf8'))
   assert.equal(manifest.provider, 'edge-tts')
   assert.equal(manifest.voice, 'zh-CN-YunxiNeural')
-  assert.equal(manifest.lines.length, 5)
+  assert.equal(manifest.lines.length, VOICE_LINES.length)
   for (const expected of VOICE_LINES) {
     const line = manifest.lines.find(item => item.key === expected.key)
     assert.equal(line?.text, expected.text)
