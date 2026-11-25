@@ -17,13 +17,13 @@
 从仓库根链接推导 raw 路径，抓取 `marketplace/marketplace.json`：
 
 - GitHub：`https://raw.githubusercontent.com/worm-longliu/worm-print-platform/master/marketplace/marketplace.json`
-- Gitee：`https://gitee.com/worm-longliu/worm-print-platform/raw/master/marketplace/marketplace.json`
+- Gitee：`https://gitee.com/liulong_oschina/worm-print-platform/raw/master/marketplace/marketplace.json`
 
 抓取失败（网络不可达、路径变化、返回非 JSON）时，明确报错并请用户提供版本号，禁止臆测，也不要用本地缓存冒充官方版本。
 
 ## 2. 读本地状态
 
-读取 `.worm-print/plugins.json` 中 `plugins[id].version`，得到该插件已装版本。
+读取 `.worm-print/plugins.json` 中 `plugins[id].version`，得到该插件已装版本。插件 id 从该清单的 `plugins` 键取得；用户未指定插件时，对每个已装 id 逐一与官方 `marketplace.json` 比对，报告所有需要更新的插件。
 
 - 文件不存在视为未安装。
 - 不要用 `package-lock.json` 或 `node_modules` 里的版本替代这份清单作为判断依据：市场插件通过 CLI 分发，版本以该清单为准。
