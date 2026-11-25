@@ -52,6 +52,7 @@ description: 用于在各类宿主中集成 @worm-print-platform/canvas（零框
 
 1. 读取用户项目的构建器、宿主框架、TypeScript 配置和现有上传/文件能力。**Vue 3 宿主（尤其原本用 `@worm-vue3-print/canvas` 的）走 `/vue3` 正式门面**；其余宿主用 canvas 主入口 `<print-designer>`。主入口零框架依赖，`/vue3` 门面把 `vue` 作为可选 peer。
 2. 按 [安装方式](references/installation.md) 选择 NPM 或源码方案，先安装并验证可解析；Vue 3 迁移见 [接入 API 的迁移对照](references/integration-api.md#4-从-worm-vue3-printcanvas-迁移到本仓)。
+   - 需要按官方仓库链接判断插件更新或安装方式时，按 [插件更新判断与按框架安装](references/plugin-update-flow.md) 执行：先取官方清单、读本地状态、识别框架，逐个询问用户确认后再操作。
 3. 与用户确认打印链路（A / B / C / 并存）。
 4. 按 [接入 API](references/integration-api.md) 接入设计器——原生宿主注册 `<print-designer>` 并注入 property、监听 CustomEvent（框架专属生命周期与坑见 [框架接入要点](references/framework-recipes.md)）；Vue 3 宿主用 `PrintDesigner` / `PrintHtmlPreview` 组件写法。再按 [全栈宿主集成指南](references/host-integration-guide.md) 落地模板管理、设计器页、业务打印入口与后端契约。
 5. 用一条最小链路验证：设计器保存 JSON → **重新打开回填再预览一次**（画布会把 `<table>` 实测高度回写 `options.height`，动态表格需确认回写后下方元素仍落在表格之下）→ 浏览器打印；链路 B 再加「模板 JSON + printData → 后端 → render 服务 → PDF」；链路 C 再加「模板 JSON + printData → 本机客户端 → 物理打印机出纸」。
