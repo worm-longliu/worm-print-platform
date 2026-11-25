@@ -9,6 +9,9 @@ const { SAMPLES } = await import(new URL('../apps/vue3/src/templates.js', import
 const URL_ = process.argv[2] || 'http://localhost:9331/'
 const ASSET_SAMPLE = SAMPLES.find(sample => sample.id === 'asset-tag')
 const PRICE_SAMPLE = SAMPLES.find(sample => sample.id === 'price-label')
+const WEIGHT_SAMPLE = SAMPLES.find(sample => sample.id === 'weight-label')
+const BATTERY_SAMPLE = SAMPLES.find(sample => sample.id === 'battery-module-label')
+const MULTIPAGE_SAMPLE = SAMPLES.find(sample => sample.id === 'multipage-mixed-orientation')
 const results = []
 
 const check = (name, pass, detail = '') => {
@@ -177,6 +180,30 @@ try {
   const assetPreview = await waitPreview(page)
   check('资产标签真实出纸预览已渲染', assetPreview.pages > 0, `${assetPreview.pages} 页`)
 
+  await waitStep(page, 'weight-label')
+  const weight = await readHostState(page)
+  check('特色模版：称签打印已加载', weight.badges.includes(WEIGHT_SAMPLE.name), weight.badges)
+
+  await waitStep(page, 'battery-module-label')
+  const battery = await readHostState(page)
+  check('特色模版：电池 SN 条码标签已加载', battery.badges.includes(BATTERY_SAMPLE.name), battery.badges)
+
+  await waitStep(page, 'barcode-size')
+  const sizeText = (await page.locator('[data-test="auto-show-subtitle"]').textContent())?.trim() ?? ''
+  check('条码尺寸属性讲解包含 barWidth 与 barHeight', sizeText.includes('barWidth') && sizeText.includes('barHeight'), sizeText)
+
+  await waitStep(page, 'barcode-dpi')
+  const dpiText = (await page.locator('[data-test="auto-show-subtitle"]').textContent())?.trim() ?? ''
+  check('条码清晰度讲解包含 printerDpi 203 与更清晰', dpiText.includes('printerDpi') && dpiText.includes('203') && dpiText.includes('清晰'), dpiText)
+
+  await waitStep(page, 'battery-preview')
+  const batteryPreview = await waitPreview(page)
+  check('电池标签条码出纸预览已渲染', batteryPreview.pages > 0, `${batteryPreview.pages} 页`)
+
+  await waitStep(page, 'multipage-mixed-orientation')
+  const multipage = await readHostState(page)
+  check('特色模版：多页横纵混排已加载', multipage.badges.includes(MULTIPAGE_SAMPLE.name), multipage.badges)
+
   await page.locator('[data-action="stop"]').click()
   await page.waitForFunction(() => !document.querySelector('.auto-show-layer'))
   await waitVisible(page, '[data-test="auto-show-fab"]')
@@ -205,7 +232,7 @@ try {
   }))
   check('auto 参数自动启动且保持静音循环', autoState.status === 'running' && autoState.sound === 'false' && autoState.loop === 'true', JSON.stringify(autoState))
   await waitStep(page, 'asset-preview', 35000)
-  await waitStep(page, 'express-waybill', 12000)
+  await waitStep(page, 'express-waybill', 30000)
   check('循环模式从第二步继续且不重复开场', true)
   await page.locator('[data-action="stop"]').click()
   await page.waitForFunction(() => !document.querySelector('.auto-show-layer'))
@@ -213,7 +240,7 @@ try {
   await page.goto(new URL('?auto=1', URL_).href, { waitUntil: 'networkidle' })
   await waitDesigner(page)
   await waitStep(page, 'asset-preview', 35000)
-  await waitVisible(page, '[data-test="auto-show-fab"]', 10000)
+  await waitVisible(page, '[data-test="auto-show-fab"]', 30000)
   check('非循环模式一轮结束后自动回到 idle', !(await page.locator('.auto-show-layer').count()) && !(await page.locator('.preview-mask').count()))
 
   await page.locator('[data-test="auto-show-fab"]').click()
