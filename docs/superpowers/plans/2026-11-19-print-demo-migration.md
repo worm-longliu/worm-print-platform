@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use subagent-driven-development (recommended) or executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 将 `web/apps/print-demo` 从 `worm-base-platform` 完整迁入 `worm-print-platform/demos/apps/print-demo`，作为本地依赖、纳入 demos 统一管理的官方业务接入示例，并清理源仓库残留。
+**Goal:** 将 `web/apps/print-demo` 从宿主基座项目完整迁入 `worm-print-platform/demos/apps/print-demo`，作为本地依赖、纳入 demos 统一管理的官方业务接入示例，并清理源仓库残留。
 
 **Architecture:** 跨仓库文件搬迁 + 配置适配（package.json / tsconfig / vite / README）+ demos 纳管脚本与文档更新 + 源仓库清理。demo 业务逻辑与 28 项测试（7 文件）随目录原样搬迁，不新写测试；验证以运行既有测试与构建为准。
 
@@ -38,7 +38,7 @@
 
 ```bash
 cd /Users/worm/worm-print-platform
-rsync -a --exclude node_modules --exclude dist /Users/worm/worm-base-platform/web/apps/print-demo/ demos/apps/print-demo/
+rsync -a --exclude node_modules --exclude dist <宿主基座项目路径>/web/apps/print-demo/ demos/apps/print-demo/
 ```
 
 确认文件清单完整（src、tests、public/mockServiceWorker.js、README.md、PROMPT.md、index.html、配置文件）。
@@ -136,7 +136,7 @@ Expected: 监听 9336，浏览器打开 `/print/template` 无 console 错误；M
 - [ ] **Step 3: 刷新 lockfile**
 
 ```bash
-cd /Users/worm/worm-base-platform/web && npm install --package-lock-only
+cd <宿主基座项目路径>/web && npm install --package-lock-only
 ```
 
 Expected: 成功；`grep -n print-demo package-lock.json package.json` 无输出。
@@ -157,7 +157,7 @@ git commit -m "chore(print-demo): 迁出至 worm-print-platform，清理 workspa
 - [ ] **Step 1: 源仓库无残留**
 
 ```bash
-cd /Users/worm/worm-base-platform
+cd <宿主基座项目路径>
 grep -rn "apps/print-demo\|@worm/print-demo" web/package.json web/package-lock.json docs/print-template-integration.md || true
 ```
 

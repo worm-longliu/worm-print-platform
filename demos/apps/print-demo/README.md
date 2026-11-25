@@ -1,7 +1,7 @@
 # @worm-print-platform/demo-print（打印模板业务接入示例）
 
 按宿主端现有代码风格演示「打印模板类型 → 字段/数据 → 模板管理 → 设计器 → 浏览器打印」的完整接入。
-本工程是 `worm-print-platform` 的官方示例之一，源码由 `worm-base-platform/web/apps/print-demo` 迁入。
+本工程是 `worm-print-platform` 的官方示例之一，源码由宿主基座项目的 `web/apps/print-demo` 迁入。
 
 - 设计器：`@worm-print-platform/canvas/vue3` 门面，依赖 `file:../../../packages/canvas` 指向本仓源码（版本 1.6.5）
 - 数据：MSW + localStorage 模拟 `/sys/print/*`，不需要后端（本地 dev 与 Pages 静态部署均启用；设 `VITE_NO_MOCK=true` 可关闭以对接真实后端）

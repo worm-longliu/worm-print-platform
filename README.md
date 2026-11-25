@@ -47,7 +47,7 @@
 
 ### 打印插件更新源优先级（AI Agent 必读）
 
-在 `worm-base-ai` 等宿主项目更新打印插件时，严格按照 **npm → Gitee → GitHub** 的顺序：npm 可用时不得切换到 Git 源；npm 不可用时再试 Gitee，最后才试 GitHub。默认 `npx @worm-print-platform/marketplace install <id> --force` 已按该顺序回退；需要指定单一来源时显式使用 `--source npm|gitee|github`，并在交付中记录实际命中的来源。
+在宿主项目更新打印插件时，严格按照 **npm → Gitee → GitHub** 的顺序：npm 可用时不得切换到 Git 源；npm 不可用时再试 Gitee，最后才试 GitHub。默认 `npx @worm-print-platform/marketplace install <id> --force` 已按该顺序回退；需要指定单一来源时显式使用 `--source npm|gitee|github`，并在交付中记录实际命中的来源。
 
 拿到官方仓库链接、需要判断某个插件是否有更新或按宿主前端框架安装时，按官方技能 `worm-print-platform-integration` 的[插件更新判断与按框架安装](./skills/worm-print-platform-integration/references/plugin-update-flow.md)执行：只读取官方清单与宿主本地状态，逐个询问用户确认后再操作，不擅自安装或升级。
 

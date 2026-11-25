@@ -1,7 +1,7 @@
-# 打印模板接入示例搬迁设计（worm-base-platform → worm-print-platform/demos/apps）
+# 打印模板接入示例搬迁设计（宿主基座项目 → worm-print-platform/demos/apps）
 
 ## 意图与原因
-`worm-base-platform` 中的 `web/apps/print-demo` 是「业务宿主如何接入打印设计器」的完整示例（模板 CRUD + 设计器 + 体检报告 + 静默打印配置 + MSW 模拟后端）。它依赖打印平台制品却住在平台基座仓库，不利于平台统一维护与下游参考。将其迁入 `worm-print-platform/demos/apps`，作为与 vue3/vue2/react/jquery 并列的官方业务接入示例；源仓库回归纯系统管理基座。
+宿主基座项目中的 `web/apps/print-demo` 是「业务宿主如何接入打印设计器」的完整示例（模板 CRUD + 设计器 + 体检报告 + 静默打印配置 + MSW 模拟后端）。它依赖打印平台制品却住在平台基座仓库，不利于平台统一维护与下游参考。将其迁入 `worm-print-platform/demos/apps`，作为与 vue3/vue2/react/jquery 并列的官方业务接入示例；源仓库回归纯系统管理基座。
 
 ## 目标
 - 完整搬迁 demo 目录（源码、测试、README、PROMPT.md、MSW worker）到目标仓库。
