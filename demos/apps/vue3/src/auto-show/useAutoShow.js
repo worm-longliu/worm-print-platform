@@ -1,5 +1,6 @@
 import { computed, isRef, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { AUTO_SHOW_STEPS, INTRO_SLIDE_MS } from './steps'
+import { waitForVoiceEnd } from './voice-wait'
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 const cloneValue = value => value == null ? value : JSON.parse(JSON.stringify(value))
@@ -129,6 +130,14 @@ export function useAutoShow({
       } else if (!await wait(step.hold, token)) {
         return
       }
+      if (token !== runToken) return
+
+      // 停留时长只是下限：开声音时配音没播完不切页，暂停中由 waitForVoiceEnd 继续等待。
+      if (!await waitForVoiceEnd({
+        getAudio: () => currentAudio,
+        isSoundEnabled: () => soundEnabled.value,
+        isCancelled: () => token !== runToken,
+      })) return
       if (token !== runToken) return
 
       index += 1

@@ -250,6 +250,29 @@ try {
   await waitHidden(page, '.preview-mask')
   check('在途预览中停止不会留下预览层', !(await page.locator('.preview-mask').count()))
 
+  // 开声音时步骤推进以配音结束为准，不能按固定停留时长抢先切页
+  await page.locator('[data-test="auto-show-fab"]').click()
+  await waitStep(page, 'express-waybill')
+  const audioIndex = await page.evaluate(() => window.__autoShowAudios.length)
+  await page.locator('[data-action="sound"]').click()
+  await page.waitForFunction(index => !!window.__autoShowAudios[index], audioIndex)
+  // 2600ms > 2000ms 停留：若仍按旧计时推进，此刻应已切到下一步
+  await page.waitForTimeout(2600)
+  const voiced = await page.evaluate(index => {
+    const audio = window.__autoShowAudios[index]
+    return {
+      step: document.querySelector('.auto-show-layer')?.dataset.stepId,
+      playing: !!audio && !audio.ended && audio.currentTime > 0,
+    }
+  }, audioIndex)
+  check('配音播放中停留在当前步骤', voiced.step === 'express-waybill' && voiced.playing, JSON.stringify(voiced))
+  await page.waitForFunction(index => window.__autoShowAudios[index]?.ended === true, audioIndex, { timeout: 15000 })
+  await waitStep(page, 'express-preview')
+  check('配音播完才切换到下一步', true)
+  await page.locator('[data-action="sound"]').click()
+  await page.locator('[data-action="stop"]').click()
+  await page.waitForFunction(() => !document.querySelector('.auto-show-layer'))
+
   await page.route('**/auto-show/voice/*.mp3', route => route.abort())
   await page.locator('[data-test="auto-show-fab"]').click()
   await waitVisible(page, '[data-test="auto-show-controls"]')
