@@ -28,6 +28,7 @@ import { createDefaultOptions, propertyDefault, DEFAULT_DEMO_DATA } from '@worm-
 import { isRotationExcludedType, isFreeAngleEditable, codeObliqueNote, collectFollowMemberIds } from '@worm-print-platform/core/designer'
 import { designBackgroundSection, tilingSection } from './page-extras'
 import { bindingGroup } from './binding'
+import { tableColumnBindingsGroup } from './table-column-bindings'
 import { renderFontSelect } from './font-select'
 import { gateItem, renderPropertySearch } from './property-search'
 import { cropAnchorField } from './crop-anchor'
@@ -100,7 +101,9 @@ function elementPane(ctx: ShellCtx, el: RuntimeElement) {
 
   const rows: unknown[] = []
   // 内容绑定组置顶：作者最常改的一栏，先于位置/外观（与 Vue 3 轨 PropertyPanel 同序）
-  if (!multiCellSelected) rows.push(bindingGroup(ctx, el))
+  // 整表选中时用「列绑定」矩阵替代逐格平铺的「内容」组；选中单元格时仍走单格写回
+  const tableColumnSelected = isTable && !cellSelected && s.selectedIds.size === 1
+  if (!multiCellSelected) rows.push(tableColumnSelected ? tableColumnBindingsGroup(ctx, el) : bindingGroup(ctx, el))
   /** 落点派生自该元素类型的出厂值：未预置的键 ⇒ undefined ⇒ 写回即删键；预置了字面值的键
    *  （text 的 fontSize、longText 的 lineHeight、image 的 fit）⇒ 写回字面值。一条规则覆盖两种
    *  相反的正确行为。reset 一律挂在外层 field/fieldHelp 上，不挂进 radioGroup 等控件构造参数。 */
