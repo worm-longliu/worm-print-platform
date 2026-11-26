@@ -19,16 +19,16 @@
 - 安装方式：NPM 包（不要用 file: / 源码别名 / 浏览器直挂）
 - 宿主形态：Vue 3 正式门面 @worm-print-platform/canvas/vue3
 - 打印链路：A 浏览器打印（如要 B 服务端 PDF 或 C 静默打印，先说明再补）
-- 版本：四个打印包精确锁 1.6.5，core / canvas / plugin-kit / echarts 同号同批，
+- 版本：四个打印包精确锁 1.6.6，core / canvas / plugin-kit / echarts 同号同批，
   提交锁文件；不要只锁其中两个版本；禁止引入 @worm-vue3-print/* 旧包名。
 
 ## 插件依赖范围（先勾选，再安装）
 必选（任何场景都要）：
-  [ ] @worm-print-platform/core@1.6.5      —— 表达式、同构渲染
-  [ ] @worm-print-platform/canvas@1.6.5    —— 设计器权威实现
-  [ ] @worm-print-platform/plugin-kit@1.6.5 —— canvas 运行时自带，显式声明避免版本漂移
+  [ ] @worm-print-platform/core@1.6.6      —— 表达式、同构渲染
+  [ ] @worm-print-platform/canvas@1.6.6    —— 设计器权威实现
+  [ ] @worm-print-platform/plugin-kit@1.6.6 —— canvas 运行时自带，显式声明避免版本漂移
 图表 / 体检报告 / 数据可视化类必选：
-  [ ] @worm-print-platform/echarts@1.6.5   —— 从 @worm-print-platform/echarts/ui import 即注册
+  [ ] @worm-print-platform/echarts@1.6.6   —— 从 @worm-print-platform/echarts/ui import 即注册
                                               图表元素（barChart / lineChart 等）
 可选（按业务场景勾选）：
   [ ] @worm-print-platform/plugin-data-preview（市场 id 为 data-preview，不单独发 npm；

@@ -13,7 +13,7 @@ description: 用于在各类宿主中集成 @worm-print-platform/canvas（零框
 - `packages/canvas/vue3`（`@worm-print-platform/canvas/vue3`）是 Vue 3 的**正式兼容门面**，导出 `PrintDesigner` / `PrintHtmlPreview` 组件，其 props / 事件 / `ref` 方法与原 `@worm-vue3-print/canvas` 的 Vue 3 组件同形（且为其超集）。**Vue 3 宿主应优先用这个门面**：原本消费 `@worm-vue3-print/canvas` 的项目，只需换依赖与 import 路径，模板、事件回调、ref 调用、业务逻辑一行不动即可迁移。底层仍是同一份零框架 canvas，vue 为本子路径的可选 peer。迁移步骤见 [接入 API](references/integration-api.md#3-vue-3-组件写法正式门面)。
 - `packages/core`（`@worm-print-platform/core`）是纯 TS 逻辑：表达式引擎、同构渲染管线与设计器内核，子路径 `/designer`、`/browser`、`/client`、`/node`。
 - 本仓**没有 `common` 包**（那是从 worm-vue3-print 拆仓前的旧包）。零框架 / 无打包器宿主直接消费 canvas 主入口或其 UMD 产物，见 [安装方式的直挂节](references/installation.md#浏览器直挂无打包器--jquery--传统项目) 与 [框架接入要点](references/framework-recipes.md)。
-- 版本以 workspace 当前版本为准（`1.6.5`）；core 与 canvas 及 plugin-kit 同号同批发版，安装时不要只锁其中两个版本号。
+- 版本以 workspace 当前版本为准（`1.6.6`）；core 与 canvas 及 plugin-kit 同号同批发版，安装时不要只锁其中两个版本号。
 - 打印插件更新源严格按 **npm → Gitee → GitHub**；`marketplace install <id> --force` 默认 `auto` 已遵循该顺序，npm 可用时不得手动切到 Git 源。
 - 市场插件的 `dist` 是运行产物，必须随宿主提交；不要用通用 `dist/` 或整个 `.worm-print/` 忽略。入口由 `src/main.js/ts` 静态 import，不写进 Vite `optimizeDeps.include`。
 - `--force` 使用暂存与原子切换，失败恢复旧插件、旧语言与旧清单；验收必须同时检查入口可导入、旧文件消失和三语 label/group 随 locale 切换。

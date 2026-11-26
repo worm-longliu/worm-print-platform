@@ -1,6 +1,6 @@
 {
   "name": "@worm-print-platform/marketplace",
-  "version": "1.6.5",
+  "version": "1.6.6",
   "type": "module",
   "description": "worm-print-platform 插件市场安装器：从 npm / GitHub / Gitee 安装单个插件，默认取最新稳定版。",
   "license": "MIT",

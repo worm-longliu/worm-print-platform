@@ -65,7 +65,7 @@ export const BUNDLED_CATALOG: MarketIndex = {
         "zh-CN": "基于 ECharts 的十类打印图表元素，浏览器与服务端同构出图。本插件通过插件市场 CLI 分发，不再单独发布 npm；兼容库 @worm-print-platform/echarts 继续独立发布。",
         "en": "Ten print chart elements based on ECharts, rendered isomorphically in browser and server. Distributed via the plugin marketplace CLI."
       },
-      "version": "1.6.5",
+      "version": "1.6.6",
       "npmName": "@worm-print-platform/plugin-echarts",
       "path": "plugins/echarts",
       "entry": "dist/marketplace.js",
@@ -100,7 +100,7 @@ export const BUNDLED_CATALOG: MarketIndex = {
       },
       "versions": [
         {
-          "version": "1.6.5",
+          "version": "1.6.6",
           "publishTimestamp": 1795530080,
           "engines": {
             "core": ">=1.5.2 <2"

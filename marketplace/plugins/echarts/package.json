@@ -1,6 +1,6 @@
 {
   "name": "@worm-print-platform/plugin-echarts",
-  "version": "1.6.5",
+  "version": "1.6.6",
   "type": "module",
   "description": "百度图表插件（worm-print-platform 插件市场主口径）：十类 ECharts 图表元素 + 设计器 UI，import 即注册；源码唯一真源位于本目录，通过市场 CLI 分发，不再单独发布 npm。",
   "license": "MIT",
@@ -41,19 +41,19 @@
   "files": ["dist", "plugin.json", "README.md", "LICENSE"],
   "wormPrint": {
     "id": "echarts",
-    "version": "1.6.5",
+    "version": "1.6.6",
     "entry": "dist/marketplace.js",
     "i18n": { "dir": "dist/i18n", "base": "zh-CN" },
     "kinds": ["barChart", "barHChart", "lineChart", "areaChart", "pieChart", "doughnutChart", "scatterChart", "radarChart", "funnelChart", "gaugeChart"],
     "exportFormats": [],
     "peerDeps": {
-      "@worm-print-platform/core": "^1.6.5",
-      "@worm-print-platform/plugin-kit": "^1.6.5"
+      "@worm-print-platform/core": "^1.6.6",
+      "@worm-print-platform/plugin-kit": "^1.6.6"
     }
   },
   "dependencies": {
-    "@worm-print-platform/core": "^1.6.5",
-    "@worm-print-platform/plugin-kit": "^1.6.5",
+    "@worm-print-platform/core": "^1.6.6",
+    "@worm-print-platform/plugin-kit": "^1.6.6",
     "echarts": "^6.1.0"
   },
   "devDependencies": {

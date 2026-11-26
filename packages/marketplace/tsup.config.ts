@@ -7,5 +7,5 @@ export default defineConfig({
   dts: true,
   clean: true,
   shims: true,
-  define: { PLUGIN_MARKETPLACE_VERSION: JSON.stringify(process.env.npm_package_version ?? '1.6.5') },
+  define: { PLUGIN_MARKETPLACE_VERSION: JSON.stringify(process.env.npm_package_version ?? '1.6.6') },
 })

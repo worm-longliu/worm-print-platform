@@ -1,6 +1,6 @@
 {
   "name": "@worm-print-platform/demo-vue2",
-  "version": "1.6.5",
+  "version": "1.6.6",
   "private": true,
   "type": "module",
   "description": "Vue 2.7 宿主（SFC 单文件组件）集成 @worm-print-platform/canvas 的独立示例：设计器挂载、事件、浏览器预览打印、服务端 PDF、客户端静默打印",

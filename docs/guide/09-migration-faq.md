@@ -3,7 +3,7 @@
 [← 返回目录](./README.md) | ← 上一篇：[插件开发](./08-plugin-dev.md) | 下一篇：[数据格式转换](./10-data-transform.md) →
 
 > 适用对象：`@worm-vue3-print/*` 老用户，以及遇到接入问题的开发者。
-> 版本口径：本仓当前稳定主线 1.6.5；老迁移文档中的「1.5.x 主线」是历史表述，以 workspace `package.json` 版本为准。
+> 版本口径：本仓当前稳定主线 1.6.6；老迁移文档中的「1.5.x 主线」是历史表述，以 workspace `package.json` 版本为准。
 
 ## 1. 从 @worm-vue3-print 迁移（摘要）
 

@@ -3,7 +3,7 @@
 按宿主端现有代码风格演示「打印模板类型 → 字段/数据 → 模板管理 → 设计器 → 浏览器打印」的完整接入。
 本工程是 `worm-print-platform` 的官方示例之一，源码由宿主基座项目的 `web/apps/print-demo` 迁入。
 
-- 设计器：`@worm-print-platform/canvas/vue3` 门面，依赖 `file:../../../packages/canvas` 指向本仓源码（版本 1.6.5）
+- 设计器：`@worm-print-platform/canvas/vue3` 门面，依赖 `file:../../../packages/canvas` 指向本仓源码（版本 1.6.6）
 - 数据：MSW + localStorage 模拟 `/sys/print/*`，不需要后端（本地 dev 与 Pages 静态部署均启用；设 `VITE_NO_MOCK=true` 可关闭以对接真实后端）
 - 打印：仅链路 A（浏览器打印）
 - 默认模板：5 类默认值与打印平台 `demos/apps/vue3` 官方示例一致（快递面单 / 称签 / 零售小票 / 付款申请单 / 健康体检报告），本地 TS 数据文件交付；体检报告为多页模板且自带图表。
@@ -27,7 +27,7 @@ npm run dev              # http://127.0.0.1:9336
 
 ### 插件依赖范围（用户按场景勾选）
 
-- 必选：`@worm-print-platform/core` + `canvas` + `plugin-kit`（同号 `1.6.5`，不要只锁两个版本）；本工程用 `file:` 指向本仓源码，外部宿主从 npm 安装
+- 必选：`@worm-print-platform/core` + `canvas` + `plugin-kit`（同号 `1.6.6`，不要只锁两个版本）；本工程用 `file:` 指向本仓源码，外部宿主从 npm 安装
 - 图表 / 体检报告类必选：`@worm-print-platform/echarts`（从 `@worm-print-platform/echarts/ui` import 即注册）
 - 可选：`@worm-print-platform/plugin-data-preview`（不单独发 npm；需要时执行 `npx @worm-print-platform/marketplace install data-preview --force`）
 - 禁止：`@worm-vue3-print/*` 旧包名

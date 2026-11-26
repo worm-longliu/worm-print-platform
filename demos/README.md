@@ -1,6 +1,6 @@
 # demos · 五个示例工程的打印设计器集成
 
-> 演示对象 `@worm-print-platform/canvas` 已作为设计器权威实现正式发布，**当前稳定主线以仓库根 `package.json` 版本为准**（编写本文时为 1.6.5；旧版 1.5.x 描述已过时），可用于生产环境。`core` / `canvas` / `plugin-kit` 同号同批发版。旧仓 `@worm-vue3-print/canvas`（见 [worm-vue3-print](https://github.com/worm-longliu/worm-vue3-print)）进入维护状态，Vue 3 老项目可经 `/vue3` 兼容门面零业务改动迁移。
+> 演示对象 `@worm-print-platform/canvas` 已作为设计器权威实现正式发布，**当前稳定主线以仓库根 `package.json` 版本为准**（编写本文时为 1.6.6；旧版 1.5.x 描述已过时），可用于生产环境。`core` / `canvas` / `plugin-kit` 同号同批发版。旧仓 `@worm-vue3-print/canvas`（见 [worm-vue3-print](https://github.com/worm-longliu/worm-vue3-print)）进入维护状态，Vue 3 老项目可经 `/vue3` 兼容门面零业务改动迁移。
 
 `@worm-print-platform/canvas`（`<print-designer>`）在 **Vue 3 / Vue 2.7 / React 18 / jQuery** 四种宿主里的接入示例，
 外加 `print-demo` —— 业务侧完整接入示例（模板管理 + 设计器 + 体检报告 + 静默打印配置，MSW 模拟 `/sys/print/*`）。

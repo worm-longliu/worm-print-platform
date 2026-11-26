@@ -1,6 +1,6 @@
 {
   "name": "worm-print-platform",
-  "version": "1.6.5",
+  "version": "1.6.6",
   "private": true,
   "type": "module",
   "description": "MIT 开源 · 零框架 Custom Elements 设计器 · 插件化元素扩展 · 同构渲染与三条打印链路（monorepo：core / plugin-kit / canvas / echarts / render / client）",

@@ -188,8 +188,8 @@ Vue 3 项目迁移的目标是**业务代码零改动**，只换依赖与 import
 ```diff
 - "@worm-vue3-print/canvas": "^1.4.8"
 - "@worm-vue3-print/core": "^1.4.8"
-+ "@worm-print-platform/canvas": "^1.6.5"
-+ "@worm-print-platform/core": "^1.6.5"
++ "@worm-print-platform/canvas": "^1.6.6"
++ "@worm-print-platform/core": "^1.6.6"
 + "vue": "^3.5.0"
 ```
 

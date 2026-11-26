@@ -16,8 +16,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@worm-print-platform/core": "^1.6.5",
-    "@worm-print-platform/echarts": "^1.6.5",
+    "@worm-print-platform/core": "^1.6.6",
+    "@worm-print-platform/echarts": "^1.6.6",
     "express": "^4.21.0",
     "playwright": "^1.60.0"
   },

@@ -52,7 +52,7 @@ export const MODULES: PromptModule[] = [
     label: '安装核心包',
     prompt: `安装核心包（先锁定版本，再接入）
 - 安装 @worm-print-platform/core、@worm-print-platform/canvas、
-  @worm-print-platform/plugin-kit，三者精确锁同一版本（如 1.6.5），
+  @worm-print-platform/plugin-kit，三者精确锁同一版本（如 1.6.6），
   同号同批并提交 lockfile；不要只锁其中两个。
 - 禁止引入 @worm-vue3-print/* 旧包名。
 - 宿主形态按项目实际选择，不强制：

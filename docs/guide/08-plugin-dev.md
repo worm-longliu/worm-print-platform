@@ -8,7 +8,7 @@
 ## 1. 前置条件（Prerequisites）
 
 - 理解 [07](./07-plugin-install.md) 的插件安装/加载机制（入口副作用模块、`plugins.json`、语言资源同步）。
-- 已安装 `@worm-print-platform/core` 与 `@worm-print-platform/plugin-kit`（同版本，当前 1.6.5）；打包器能把它们 external 掉。
+- 已安装 `@worm-print-platform/core` 与 `@worm-print-platform/plugin-kit`（同版本，当前 1.6.6）；打包器能把它们 external 掉。
 - 一个可加载插件的宿主工程（见 [07 §2.4](./07-plugin-install.md#24-宿主加载host-loading)）。
 
 ## 2. 术语与四个 id（Terminology）
@@ -125,7 +125,7 @@ registerExportPlugin(defineExportPlugin({
 
 | 文件 | 作用 | 关键字段 |
 | --- | --- | --- |
-| `package.json#wormPrint` | npm 包自声明，语言 CLI 发现资源靠它 | `id`、`version`、`entry`、`kinds`（字符串数组）、`exportFormats`、`peerDeps`（**对象**，如 `{ "@worm-print-platform/core": "^1.6.5" }`）、`i18n: { dir, base }` |
+| `package.json#wormPrint` | npm 包自声明，语言 CLI 发现资源靠它 | `id`、`version`、`entry`、`kinds`（字符串数组）、`exportFormats`、`peerDeps`（**对象**，如 `{ "@worm-print-platform/core": "^1.6.6" }`）、`i18n: { dir, base }` |
 | `plugin.json` | 插件目录内的元数据（市场安装读取） | `id`、`version`、`name`、`npmName`、`entry`、`kinds`（可为 `{ type, label }[]`）、`exportFormats`、`peerDeps`（对象）、`files`（发布/安装所需文件清单） |
 | `marketplace.json` | 仓库市场索引条目 | `id`、`name`、`description`、`version`、`npmName`、`path`、`entry`、`kinds`（字符串数组）、`exportFormats`、`homepage`、`license`、`minCoreVersion` |
 | `plugins.json` | 安装后宿主清单（CLI 生成，勿手改） | `schemaVersion`、`plugins[id]: { version, entry, kinds, exportFormats, npmName, source, stable, installedAt, i18n }` |

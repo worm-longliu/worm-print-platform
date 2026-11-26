@@ -24,7 +24,7 @@ import {
   upsertManifestEntry,
   validateIndex,
   writeManifest
-} from "./chunk-SIIHBJ4M.js";
+} from "./chunk-EI5FJ455.js";
 export {
   BUNDLED_CATALOG,
   DEFAULT_GITEE_REPO,

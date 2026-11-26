@@ -106,8 +106,8 @@ npm run publish:canvas:check       # 只检查 canvas 的 dist-tag 健康度（l
 `publish-npm.yml` 仅手动触发，认证为纯 Trusted Publishing（OIDC，不注入任何 npm token）。前提：npmjs.com 各包已配置 Trusted Publisher（Organization `worm-longliu` / Repository `worm-print-platform` / Workflow `publish-npm.yml` / Environment 留空 / Allowed actions 勾选 `npm publish`），账号 Publishing access 选 "disallow bypass 2fa tokens"。发版完整流程见 `.agents/skills/releasing-official-version/SKILL.md`。
 
 ```bash
-gh workflow run publish-npm.yml -f tag=v1.6.5 -f dry_run=true   # 先干跑
-gh workflow run publish-npm.yml -f tag=v1.6.5 -f dry_run=false  # 再正式发布
+gh workflow run publish-npm.yml -f tag=v1.6.6 -f dry_run=true   # 先干跑
+gh workflow run publish-npm.yml -f tag=v1.6.6 -f dry_run=false  # 再正式发布
 ```
 
 dist-tag 运维与 Gitee Release：
@@ -115,10 +115,10 @@ dist-tag 运维与 Gitee Release：
 ```bash
 # 移除/添加 dist-tag（如清理首发自动生成的 latest）
 gh workflow run npm-dist-tag.yml -f pkg=@worm-print-platform/canvas -f action=rm -f tag=latest
-gh workflow run npm-dist-tag.yml -f pkg=@worm-print-platform/canvas -f action=add -f tag=next -f version=1.6.5
+gh workflow run npm-dist-tag.yml -f pkg=@worm-print-platform/canvas -f action=add -f tag=next -f version=1.6.6
 
 # 按 GitHub 同名 release 正文在 Gitee 创建 release
-gh workflow run create-gitee-release.yml -f tag=v1.6.5
+gh workflow run create-gitee-release.yml -f tag=v1.6.6
 ```
 
 ## 客户端打包
@@ -210,7 +210,7 @@ docker run -p 3001:3001 \
 | Workflow | 用途 | 触发方式 |
 | --- | --- | --- |
 | `ci.yml` | 全量 build + test，render 分页集成用例单独 job | `gh workflow run ci.yml` |
-| `publish-npm.yml` | 按 tag 发布 7 个包（core / plugin-kit / canvas / echarts / skills / marketplace / i18n，支持 dry run） | `gh workflow run publish-npm.yml -f tag=v1.6.5 -f dry_run=true` |
+| `publish-npm.yml` | 按 tag 发布 7 个包（core / plugin-kit / canvas / echarts / skills / marketplace / i18n，支持 dry run） | `gh workflow run publish-npm.yml -f tag=v1.6.6 -f dry_run=true` |
 | `npm-dist-tag.yml` | 运维 dist-tag（rm / add） | `gh workflow run npm-dist-tag.yml ...` |
-| `create-gitee-release.yml` | 在 Gitee 创建同名 release | `gh workflow run create-gitee-release.yml -f tag=v1.6.5` |
+| `create-gitee-release.yml` | 在 Gitee 创建同名 release | `gh workflow run create-gitee-release.yml -f tag=v1.6.6` |
 | `deploy-pages.yml` | 五个宿主 demo 的 GitHub Pages 静态演示 | `gh workflow run deploy-pages.yml` |

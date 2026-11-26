@@ -1,6 +1,6 @@
 {
   "name": "@worm-print-platform/i18n",
-  "version": "1.6.5",
+  "version": "1.6.6",
   "type": "module",
   "description": "worm-print-platform 语言包工具：导出翻译骨架、校验与增量更新。",
   "license": "MIT",
