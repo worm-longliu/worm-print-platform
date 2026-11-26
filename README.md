@@ -229,39 +229,39 @@ import '@worm-print-platform/plugin-echarts/ui'
 
 客户端用于**链路 C**，安装包随 GitHub Releases 分发：
 
-👉 [v1.6.1 安装包 & SHA256SUMS](https://github.com/worm-longliu/worm-print-platform/releases/tag/v1.6.1)（macOS x64 / arm64、Windows x64 与 Linux x64 均已随 v1.6.1 重新打包上传）
+👉 [v1.6.6 安装包 & SHA256SUMS](https://github.com/worm-longliu/worm-print-platform/releases/tag/v1.6.6)（macOS x64 / arm64、Windows x64 与 Linux x64 均已随 v1.6.6 重新打包上传）
 
-<!-- 维护提示：仅当新版确实重新打包并上传客户端安装包（release 资产存在）时，才替换下方直链与版本号；纯设计器发版请保留历史链接。本轮 v1.6.4 未重打包客户端，mac / win / linux 沿用 v1.6.1 资产。规则见 .agents/skills/releasing-official-version/references/version-carriers.md -->
+<!-- 维护提示：仅当新版确实重新打包并上传客户端安装包（release 资产存在）时，才替换下方直链与版本号；纯设计器发版请保留历史链接。本轮 v1.6.6 已重新打包并上传 mac / win / linux 安装包。规则见 .agents/skills/releasing-official-version/references/version-carriers.md -->
 
 ### 下载客户端安装包
 
 安装包**不在 npm 发布，也不入仓库**，而是作为 GitHub 发行版（Releases）的附件提供：
 
-> **[GitHub Releases 页面](https://github.com/worm-longliu/worm-print-platform/releases)** —— 点击下载，无需登录。macOS / Windows / Linux 最新安装包均来自 `v1.6.1`（正式版，Release 标记为 Prerelease=false）。
+> **[GitHub Releases 页面](https://github.com/worm-longliu/worm-print-platform/releases)** —— 点击下载，无需登录。macOS / Windows / Linux 最新安装包均来自 `v1.6.6`（正式版，Release 标记为 Prerelease=false）。
 
-下表是客户端安装包完整直链，可直接点击或复制。macOS / Windows / Linux 均为 `v1.6.1` 重新打包版本。
+下表是客户端安装包完整直链，可直接点击或复制。macOS / Windows / Linux 均为 `v1.6.6` 重新打包版本。
 
 | 安装包直链 | 适用系统 |
 | --- | --- |
-| [https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.1/WormPrintClient-1.6.1-mac-x64.dmg](https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.1/WormPrintClient-1.6.1-mac-x64.dmg) | Intel Mac |
-| [https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.1/WormPrintClient-1.6.1-mac-arm64.dmg](https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.1/WormPrintClient-1.6.1-mac-arm64.dmg) | Apple Silicon Mac |
-| [https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.1/WormPrintClient-1.6.1-win-x64.exe](https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.1/WormPrintClient-1.6.1-win-x64.exe) | Windows 10 / 11 x64（NSIS 安装程序，可选择安装目录、创建桌面快捷方式） |
-| [https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.1/WormPrintClient-1.6.1-linux-amd64.deb](https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.1/WormPrintClient-1.6.1-linux-amd64.deb) | Debian / Ubuntu x64（`sudo apt install ./<文件>`） |
-| [https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.1/WormPrintClient-1.6.1-linux-x86_64.rpm](https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.1/WormPrintClient-1.6.1-linux-x86_64.rpm) | Fedora / RHEL / openSUSE x64（`sudo rpm -i <文件>`） |
-| [https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.1/WormPrintClient-1.6.1-linux-x86_64.AppImage](https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.1/WormPrintClient-1.6.1-linux-x86_64.AppImage) | 任意 x64 发行版，免安装单文件（需 `libfuse2`） |
-| [https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.1/SHA256SUMS.txt](https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.1/SHA256SUMS.txt) | v1.6.1 macOS / Windows / Linux 安装包的 SHA-256 校验和 |
+| [https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.6/WormPrintClient-1.6.6-mac-x64.dmg](https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.6/WormPrintClient-1.6.6-mac-x64.dmg) | Intel Mac |
+| [https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.6/WormPrintClient-1.6.6-mac-arm64.dmg](https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.6/WormPrintClient-1.6.6-mac-arm64.dmg) | Apple Silicon Mac |
+| [https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.6/WormPrintClient-1.6.6-win-x64.exe](https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.6/WormPrintClient-1.6.6-win-x64.exe) | Windows 10 / 11 x64（NSIS 安装程序，可选择安装目录、创建桌面快捷方式） |
+| [https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.6/WormPrintClient-1.6.6-linux-amd64.deb](https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.6/WormPrintClient-1.6.6-linux-amd64.deb) | Debian / Ubuntu x64（`sudo apt install ./<文件>`） |
+| [https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.6/WormPrintClient-1.6.6-linux-x86_64.rpm](https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.6/WormPrintClient-1.6.6-linux-x86_64.rpm) | Fedora / RHEL / openSUSE x64（`sudo rpm -i <文件>`） |
+| [https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.6/WormPrintClient-1.6.6-linux-x86_64.AppImage](https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.6/WormPrintClient-1.6.6-linux-x86_64.AppImage) | 任意 x64 发行版，免安装单文件（需 `libfuse2`） |
+| [https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.6/SHA256SUMS-v1.6.6.txt](https://github.com/worm-longliu/worm-print-platform/releases/download/v1.6.6/SHA256SUMS-v1.6.6.txt) | v1.6.6 macOS / Windows / Linux 安装包的 SHA-256 校验和 |
 
 下载不动或速度很慢时（GitHub 附件在国内直连常掉速，大文件容易中途断开）：
 
 - 复制上表任意一条链接，粘贴到**迅雷**、IDM、qBittorrent 等支持断点续传的下载工具新建任务即可，安装包本身没有限制来源；用浏览器另存为时若提示失败，重试同一链接通常就能续上。
 - 连 [Releases 页面](https://github.com/worm-longliu/worm-print-platform/releases) 本身都打不开时，说明是 GitHub 访问受阻而非文件过大：换用可访问 GitHub 的网络或代理后重试，或直接按下方[手工打包速查](#手工打包速查)自行打包（Gitee 侧的发行版只有源码包，没有安装包附件）。
 - 下载工具有时会在文件名后追加 `(1)` 等重复标记，安装前核对一下文件名即可。
-- 无论走哪条途径，装前都用 `SHA256SUMS.txt` 核对一次：校验和不一致说明文件不完整或被替换，请重新下载。
+- 无论走哪条途径，装前都用 `SHA256SUMS-v1.6.6.txt` 核对一次：校验和不一致说明文件不完整或被替换，请重新下载。
 
 下载后可与安装包放在同一目录校验完整性（Linux 用 `sha256sum -c`）：
 
 ```bash
-shasum -a 256 -c SHA256SUMS.txt
+shasum -a 256 -c SHA256SUMS-v1.6.6.txt
 ```
 
 - **安装包未做 Developer ID 签名与公证**（本项目没有 Apple Developer ID 与 Windows 签名证书），首次打开会被系统拦截：macOS 执行 `xattr -dr com.apple.quarantine /Applications/WormPrintClient.app`，或在 系统设置 → 隐私与安全性 点「仍要打开」；Windows 在 SmartScreen 提示「未知发布者」页点「更多信息」→「仍要运行」。
